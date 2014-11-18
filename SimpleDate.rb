@@ -79,13 +79,14 @@ class SimpleDate
       return 365
     else
       return 366
+    end
   end
 
   #
   # Returns true if this date is in a leap year, false otherwise
   #
   def leapYear?
-    if @year % 4 == 0 && @year % 100 == 0 && @year % 400 == 0
+    if @year % 4 == 0 && @year % 100 != 0 && @year % 400 != 0
       return true
     else
       return false
@@ -130,7 +131,7 @@ class SimpleDate
   # Raise ArgumentError if the new date is before the minimum allowable date (1/1/1753).
   #
   def daysAgo(n)
-
+    return -1
   end
 
   #
@@ -139,22 +140,21 @@ class SimpleDate
   # Raise ArgumentError if the new date is before the minimum allowable date (1/1/1753).
   #
   def daysFromNow(n)
-
+    return -1
   end
 
   #
   # Returns a string representation of this SimpleDate object.
   #
   def to_s
-    puts "what the shit"
-    "#{@year} -----"
+    "#{@month}/#{@day}/#{@year}"
   end
 
   #
   # Class method that returns true if the given year is a leap year, false otherwise.
   #
   def self.leapYear?(year)
-    if year % 4 == 0 && year % 100 == 0 && year % 400 == 0
+    if year % 4 == 0 && year % 100 != 0 && year % 400 != 0
       return true
     else
       return false
@@ -188,7 +188,7 @@ class SimpleDate
   #
   def self.validDate?(month, day, year)
     if year >= MIN_YEAR && month > 0 && month <= NUM_MONTHS && day > 0
-      if self.isLeapYear? && month == 2 && day <= DAYS_IN_MONTH[month] + 1
+      if self.leapYear?(year) && month == 2 && day <= DAYS_IN_MONTH[month] + 1
         return true
       elsif day <= DAYS_IN_MONTH[month]
         return true
@@ -196,14 +196,14 @@ class SimpleDate
         return false
       end
     end
+    return false
   end
-
-
 
 end
 # end of SimpleDate class
 
-puts "some stuff"
-sd = SimpleDate.new(1, 1, 1997)
-puts sd.to_s
-end
+sd = SimpleDate.new(1, 1, 2008)
+puts sd
+puts sd.leapYear?
+
+puts SimpleDate.validDate?(1 ,2, 1800)
