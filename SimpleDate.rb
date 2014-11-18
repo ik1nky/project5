@@ -70,6 +70,17 @@ class SimpleDate
   # Returns an integer (must be same as constants SUNDAY, MONDAY, etc.) representing the day of the week for this date.
 
   def dayOfWeek
+    days = 0;
+    tempYear = MIN_YEAR
+    while tempYear < @year
+      days += SimpleDate.daysInYear(tempYear).to_i
+      #puts "daysInYear #{SimpleDate.daysInYear(tempYear)}"
+      tempYear+=1
+    end
+
+    days = days + ordinalDate
+    puts "days #{days}"
+    days = days % 7
 
   end
 
@@ -86,7 +97,11 @@ class SimpleDate
   # Returns true if this date is in a leap year, false otherwise
   #
   def leapYear?
-    if @year % 4 == 0 && @year % 100 != 0 && @year % 400 != 0
+    if year % 400
+      return true
+    elsif year % 100
+      return false
+    elsif year % 4
       return true
     else
       return false
@@ -97,10 +112,11 @@ class SimpleDate
   # Returns the number of days that have elapsed (including this day) since 1 January.
   #
   def ordinalDate
-    #days = DAYS_THUS_FAR[@month] + @days
-    #if self.leapYear?
-    #  days++
-    #end
+    ordinal = DAYS_THUS_FAR[@month].to_i + @day.to_i
+    if leapYear? && @month > 2
+      ordinal = ordinal + 1
+    end
+    return ordinal
   end
 
   #
@@ -154,7 +170,11 @@ class SimpleDate
   # Class method that returns true if the given year is a leap year, false otherwise.
   #
   def self.leapYear?(year)
-    if year % 4 == 0 && year % 100 != 0 && year % 400 != 0
+    if year % 400
+      return true
+    elsif year % 100
+      return false
+    elsif year % 4
       return true
     else
       return false
@@ -165,7 +185,7 @@ class SimpleDate
   # Class method that returns the number of days in the given year.
   #
   def self.daysInYear(year)
-    if self.leapyear?(year)
+    if self.leapYear?(year)
       return DAYS_LEAP_YEAR
     else
       return DAYS_YEAR
@@ -202,8 +222,22 @@ class SimpleDate
 end
 # end of SimpleDate class
 
-sd = SimpleDate.new(1, 1, 2008)
+sd = SimpleDate.new(1, 1, 1754)
 puts sd
 puts sd.leapYear?
+puts sd.dayOfWeek
+puts "ordinal date #{sd.ordinalDate}"
+
+puts "-------"
+
+sd2 = SimpleDate.new(11, 17, 2014)
+puts sd2
+puts sd2.ordinalDate
+
+puts sd2.dayOfWeek
+
+puts "leap year #{sd2.leapYear?}"
+
+
 
 puts SimpleDate.validDate?(1 ,2, 1800)
