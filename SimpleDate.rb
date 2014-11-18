@@ -57,7 +57,7 @@ class SimpleDate
     if self.year != other.year
       return self.year - other.year
     elsif self.month != other.month
-      return self.month - other.year
+      return self.month - other.month
     elsif self.day != other.day
       return self.day - other.day
     else
@@ -73,14 +73,27 @@ class SimpleDate
 
   # Returns the number of days in the year of this date
   def daysInYear
-
+	case leapYear?
+	when  true
+		return 366
+	else
+		return 365
+	end
   end
 
   #
   # Returns true if this date is in a leap year, false otherwise
   #
   def leapYear?
-
+	if year >= MIN_YEAR && self.month > 0 && self.month <= NUM_MONTHS && self.day > 0
+      		if isLeapYear? && self.month == 2 && self.day <= DAYS_IN_MONTH[self.month] + 1
+        		return true
+      		elsif self.day <= DAYS_IN_MONTH[self.month]
+       	 		return true
+      		else
+        		return false
+      		end
+    	end
   end
 
   #
