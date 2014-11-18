@@ -40,6 +40,7 @@ class SimpleDate
     @month = month
     @day = day
     @year = year
+    puts "do something here"
   end
 
   #
@@ -95,9 +96,10 @@ class SimpleDate
   # Returns the number of days that have elapsed (including this day) since 1 January.
   #
   def ordinalDate
-    days = DAYS_THUS_FAR[@month] + @days
-    if leapYear?
-      days++
+    #days = DAYS_THUS_FAR[@month] + @days
+    #if self.leapYear?
+    #  days++
+    #end
   end
 
   #
@@ -114,11 +116,11 @@ class SimpleDate
   def prevDate
     if @days == 1
       @days = DAYS_IN_MONTH[@month - 1]
-      @month--
+      @month = @month - 1
     elsif @month == 1
       @month = 12
       @day = 31
-      @year--
+      @year = @month - 1
     end
   end
 
@@ -144,7 +146,8 @@ class SimpleDate
   # Returns a string representation of this SimpleDate object.
   #
   def to_s
-    "#{@month}/#{@day}/#{@year}"
+    puts "what the shit"
+    "#{@year} -----"
   end
 
   #
@@ -195,5 +198,12 @@ class SimpleDate
     end
   end
 
+
+
 end
 # end of SimpleDate class
+
+puts "some stuff"
+sd = SimpleDate.new(1, 1, 1997)
+puts sd.to_s
+end
