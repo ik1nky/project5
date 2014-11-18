@@ -14,6 +14,7 @@ class SimpleDate
   DAYS_LEAP_YEAR = 366
   DAYS_IN_MONTH = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
   DAYS_THUS_FAR = [0, 0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334]
+  MONTH_TABLE = [0, 3, 3, 6, 1, 4, 6, 2, 5, 0, 3, 5]
 
   # define few more useful constants representing day of week
   SUNDAY = 0
@@ -57,7 +58,7 @@ class SimpleDate
     if self.year != other.year
       return self.year - other.year
     elsif self.month != other.month
-      return self.month - other.year
+      return self.month - other.month
     elsif self.day != other.day
       return self.day - other.day
     else
@@ -73,21 +74,30 @@ class SimpleDate
 
   # Returns the number of days in the year of this date
   def daysInYear
-
+    if leapYear?
+      return 365
+    else
+      return 366
   end
 
   #
   # Returns true if this date is in a leap year, false otherwise
   #
   def leapYear?
-
+    if @year % 4 == 0 && @year % 100 == 0 && @year % 400 == 0
+      return true
+    else
+      return false
+    end
   end
 
   #
   # Returns the number of days that have elapsed (including this day) since 1 January.
   #
   def ordinalDate
-    days = DAYS_THUS_FAR[@month]
+    days = DAYS_THUS_FAR[@month] + @days
+    if leapYear?
+      days++
   end
 
   #
@@ -102,7 +112,14 @@ class SimpleDate
   # previous date is before the MIN_YEAR (i.e.. 1753).
   #
   def prevDate
-
+    if @days == 1
+      @days = DAYS_IN_MONTH[@month - 1]
+      @month--
+    elsif @month == 1
+      @month = 12
+      @day = 31
+      @year--
+    end
   end
 
   #
