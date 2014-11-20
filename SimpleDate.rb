@@ -73,7 +73,6 @@ class SimpleDate
     tempYear = MIN_YEAR
     while tempYear < @year
       days += SimpleDate.daysInYear(tempYear).to_i
-      #puts "daysInYear #{SimpleDate.daysInYear(tempYear)}"
       tempYear+=1
     end
 
@@ -96,11 +95,11 @@ class SimpleDate
   # Returns true if this date is in a leap year, false otherwise
   #
   def leapYear?
-    if !(year % 400)
+    if year % 400 == 0
       return true
-    elsif !(year % 100)
+    elsif year % 100 == 0
       return false
-    elsif !(year % 4)
+    elsif year % 4 == 0
       return true
     else
       return false
@@ -188,11 +187,11 @@ class SimpleDate
   # Class method that returns true if the given year is a leap year, false otherwise.
   #
   def self.leapYear?(year)
-    if !(year % 400)
+    if year % 400 == 0
       return true
-    elsif !(year % 100)
+    elsif year % 100 == 0
       return false
-    elsif !(year % 4)
+    elsif year % 4 == 0
       return true
     else
       return false
