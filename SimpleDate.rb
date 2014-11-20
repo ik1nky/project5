@@ -213,7 +213,7 @@ class SimpleDate
   # Class method that returns the number of days in a month for a given year.
   #
   def self.daysInMonth(month, year)
-    if self.isLeapYear(year) && month == 2
+    if self.LeapYear(year) && month == 2
       return DAYS_IN_MONTH[month] + 1
     else
       return DAYS_IN_MONTH[month]
