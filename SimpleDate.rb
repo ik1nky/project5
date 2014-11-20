@@ -127,7 +127,7 @@ class SimpleDate
       return SimpleDate.new(1,1,@year+1)
 
     elsif (leapYear? && sd.month == 2 && sd.day == DAYS_IN_MONTH[sd.month] + 1)
-        return SimpleDate.new(3,1,@year)
+      return SimpleDate.new(3,1,@year)
 
     elsif(sd.day == DAYS_IN_MONTH[sd.month])
       return SimpleDate.new(@month+1,1,@year)
@@ -148,7 +148,7 @@ class SimpleDate
       return SimpleDate.new(12,31,@year-1)
 
     elsif (leapYear? && sd.month == 3 && sd.day == 1)
-        return SimpleDate.new(2,29,@year)
+      return SimpleDate.new(2,29,@year)
 
     elsif(sd.day == 1)
       return SimpleDate.new(@month-1,DAYS_IN_MONTH[@month-1],@year)
@@ -164,7 +164,7 @@ class SimpleDate
   # Raise ArgumentError if the new date is before the minimum allowable date (1/1/1753).
   #
   def daysAgo(n)
-    return -1
+    return daysFromNow(-n)
   end
 
   #
@@ -173,7 +173,19 @@ class SimpleDate
   # Raise ArgumentError if the new date is before the minimum allowable date (1/1/1753).
   #
   def daysFromNow(n)
-    return -1
+
+    sd = SimpleDate.new(@month, @day, @year)
+    if n > 0
+      n.times do
+        sd.nextDate!
+      end
+    else
+      n.times do
+        sd.prevDate!
+      end
+    end
+
+    return sd
   end
 
   #
@@ -213,7 +225,7 @@ class SimpleDate
   # Class method that returns the number of days in a month for a given year.
   #
   def self.daysInMonth(month, year)
-    if self.LeapYear(year) && month == 2
+    if self.isLeapYear(year) && month == 2
       return DAYS_IN_MONTH[month] + 1
     else
       return DAYS_IN_MONTH[month]
