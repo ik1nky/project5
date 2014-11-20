@@ -40,7 +40,6 @@ class SimpleDate
     @month = month
     @day = day
     @year = year
-    puts "do something here"
   end
 
   #
@@ -79,7 +78,7 @@ class SimpleDate
     end
 
     days = days + ordinalDate
-    puts "days #{days}"
+    #puts "days #{days}"
     days = days % 7
 
   end
@@ -97,11 +96,11 @@ class SimpleDate
   # Returns true if this date is in a leap year, false otherwise
   #
   def leapYear?
-    if year % 400
+    if !(year % 400)
       return true
-    elsif year % 100
+    elsif !(year % 100)
       return false
-    elsif year % 4
+    elsif !(year % 4)
       return true
     else
       return false
@@ -123,7 +122,20 @@ class SimpleDate
   # Returns a SimpleDate object representing the next date of this date.
   #
   def nextDate
+    sd = SimpleDate.new(@month, @day, @year)
 
+    if (sd.month == 12 && sd.day == 31)
+      return SimpleDate.new(1,1,@year+1)
+
+    elsif (leapYear? && sd.month == 2 && sd.day == DAYS_IN_MONTH[sd.month] + 1)
+        return SimpleDate.new(3,1,@year)
+
+    elsif(sd.day == DAYS_IN_MONTH[sd.month])
+      return SimpleDate.new(@month+1,1,@year)
+
+    else
+      return SimpleDate.new(@month,@day+1,@year)
+    end
   end
 
   #
@@ -131,13 +143,19 @@ class SimpleDate
   # previous date is before the MIN_YEAR (i.e.. 1753).
   #
   def prevDate
-    if @days == 1
-      @days = DAYS_IN_MONTH[@month - 1]
-      @month = @month - 1
-    elsif @month == 1
-      @month = 12
-      @day = 31
-      @year = @month - 1
+    sd = SimpleDate.new(@month, @day, @year)
+
+    if (sd.month == 1 && sd.day == 1)
+      return SimpleDate.new(12,31,@year-1)
+
+    elsif (leapYear? && sd.month == 3 && sd.day == 1)
+        return SimpleDate.new(2,29,@year)
+
+    elsif(sd.day == 1)
+      return SimpleDate.new(@month-1,DAYS_IN_MONTH[@month-1],@year)
+
+    else
+      return SimpleDate.new(@month,@day-1,@year)
     end
   end
 
@@ -170,11 +188,11 @@ class SimpleDate
   # Class method that returns true if the given year is a leap year, false otherwise.
   #
   def self.leapYear?(year)
-    if year % 400
+    if !(year % 400)
       return true
-    elsif year % 100
+    elsif !(year % 100)
       return false
-    elsif year % 4
+    elsif !(year % 4)
       return true
     else
       return false
@@ -241,3 +259,32 @@ puts "leap year #{sd2.leapYear?}"
 
 
 puts SimpleDate.validDate?(1 ,2, 1800)
+
+sd3 = SimpleDate.new(1, 1, 1756)
+p sd
+
+puts sd3.prevDate
+
+sd3 = SimpleDate.new(3, 1, 2004)
+puts sd3.prevDate
+
+sd3 = SimpleDate.new(3, 5, 2004)
+puts sd3.prevDate
+
+
+puts "--------- sd4 ---------"
+sd4 = SimpleDate.new(3, 1, 2004)
+puts sd4.leapYear?
+puts sd4.prevDate
+puts sd4.nextDate
+
+puts "--------- sd5 ---------"
+sd5 = SimpleDate.new(3, 1, 2007)
+puts sd5.leapYear?
+puts sd5.prevDate
+puts sd5.nextDate
+
+
+
+sd6 = SimpleDate.new(11, 19, 2014)
+puts sd6.dayOfWeek
