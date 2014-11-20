@@ -1,7 +1,7 @@
 #
 # SimpleDate class represents a calendar date and contains methods to analyze dates.
 #
-# Author: Your Name(s)
+# Author: Michael Kinkema && Jack Rosenhauer
 #
 class SimpleDate
 
@@ -37,9 +37,13 @@ class SimpleDate
   #     values of month, day, and year do not represent a valid date
   #
   def initialize(month, day, year)
-    @month = month
-    @day = day
-    @year = year
+    if SimpleDate.validDate?(month, day, year)
+      @month = month
+      @day = day
+      @year = year
+    else
+      raise ArgumentError
+    end
   end
 
   #
@@ -55,12 +59,15 @@ class SimpleDate
   # Defines an ordering between this SimpleDate object and other SimpleDate object. Returns a negative, zero, or postive number depending on whether the receiver is less than, equal to, or greater than the other object. If the other object is not comparable then the <=> operator should return nil.
 
   def <=>(other)
-    if self.year != other.year
-      return self.year - other.year
-    elsif self.month != other.month
-      return self.month - other.month
-    elsif self.day != other.day
-      return self.day - other.day
+    if !other.instance_of?(SimpleDate)
+      return nil
+    end
+    if @year != other.year
+      return @year - other.year
+    elsif @month != other.month
+      return @month - other.month
+    elsif @day != other.day
+      return @day - other.day
     else
       return 0
     end
@@ -85,9 +92,9 @@ class SimpleDate
   # Returns the number of days in the year of this date
   def daysInYear
     if leapYear?
-      return 365
-    else
       return 366
+    else
+      return 365
     end
   end
 
@@ -95,11 +102,11 @@ class SimpleDate
   # Returns true if this date is in a leap year, false otherwise
   #
   def leapYear?
-    if year % 400 == 0
+    if @year % 400 == 0
       return true
-    elsif year % 100 == 0
+    elsif @year % 100 == 0
       return false
-    elsif year % 4 == 0
+    elsif @year % 4 == 0
       return true
     else
       return false
@@ -124,16 +131,16 @@ class SimpleDate
     sd = SimpleDate.new(@month, @day, @year)
 
     if (sd.month == 12 && sd.day == 31)
-      return SimpleDate.new(1,1,@year+1)
+      return SimpleDate.new(1, 1, @year+1)
 
-    elsif (leapYear? && sd.month == 2 && sd.day == DAYS_IN_MONTH[sd.month] + 1)
-      return SimpleDate.new(3,1,@year)
+    elsif (leapYear? && sd.month == 2 && sd.day == DAYS_IN_MONTH[sd.month] )
+      return SimpleDate.new(2, 29, @year)
 
-    elsif(sd.day == DAYS_IN_MONTH[sd.month])
-      return SimpleDate.new(@month+1,1,@year)
+    elsif(sd.day == SimpleDate.daysInMonth(month, year))
+      return SimpleDate.new(@month + 1, 1, @year)
 
     else
-      return SimpleDate.new(@month,@day+1,@year)
+      return SimpleDate.new(@month, @day + 1, @year)
     end
   end
 
@@ -145,16 +152,16 @@ class SimpleDate
     sd = SimpleDate.new(@month, @day, @year)
 
     if (sd.month == 1 && sd.day == 1)
-      return SimpleDate.new(12,31,@year-1)
+      return SimpleDate.new(12, 31, @year - 1)
 
-    elsif (leapYear? && sd.month == 3 && sd.day == 1)
-      return SimpleDate.new(2,29,@year)
+    elsif (sd.leapYear? && sd.month == 3 && sd.day == 1)
+      return SimpleDate.new(2, 29, @year)
 
     elsif(sd.day == 1)
-      return SimpleDate.new(@month-1,DAYS_IN_MONTH[@month-1],@year)
+      return SimpleDate.new(@month - 1,DAYS_IN_MONTH[@month - 1],@year)
 
     else
-      return SimpleDate.new(@month,@day-1,@year)
+      return SimpleDate.new(@month, @day - 1, @year)
     end
   end
 
@@ -164,7 +171,21 @@ class SimpleDate
   # Raise ArgumentError if the new date is before the minimum allowable date (1/1/1753).
   #
   def daysAgo(n)
-    return daysFromNow(-n)
+    puts n
+    sd = SimpleDate.new(@month, @day, @year)
+    if n < 0
+      n *= -1
+      n.times do
+        sd = sd.nextDate
+      end
+    else
+      n.times do
+        sd = sd.prevDate
+        #puts sd
+      end
+    end
+
+    return sd
   end
 
   #
@@ -173,18 +194,18 @@ class SimpleDate
   # Raise ArgumentError if the new date is before the minimum allowable date (1/1/1753).
   #
   def daysFromNow(n)
-
     sd = SimpleDate.new(@month, @day, @year)
     if n > 0
       n.times do
-        sd.nextDate!
+        sd = sd.nextDate
       end
     else
+      n *= -1
       n.times do
-        sd.prevDate!
+        sd = sd.prevDate
+        #puts "fuck"
       end
     end
-
     return sd
   end
 
@@ -225,7 +246,7 @@ class SimpleDate
   # Class method that returns the number of days in a month for a given year.
   #
   def self.daysInMonth(month, year)
-    if self.leapYear(year) && month == 2
+    if self.leapYear?(year) && month == 2
       return DAYS_IN_MONTH[month] + 1
     else
       return DAYS_IN_MONTH[month]
@@ -236,15 +257,28 @@ class SimpleDate
   # Class method that determines if values for month, day, and year represent a valid date.
   #
   def self.validDate?(month, day, year)
+     if !month.is_a?(Integer) || !day.is_a?(Integer) || !year.is_a?(Integer)
+       raise ArgumentError
+     end
+
     if year >= MIN_YEAR && month > 0 && month <= NUM_MONTHS && day > 0
+      #puts "-234234234"
+      #puts self.leapYear?(year)
+      #puts month == 2
+      #puts day = DAYS_IN_MONTH[month] + 1
+      #puts DAYS_IN_MONTH[month] + 1
+      #puts day
+      #puts "--- end"
       if self.leapYear?(year) && month == 2 && day <= DAYS_IN_MONTH[month] + 1
         return true
       elsif day <= DAYS_IN_MONTH[month]
         return true
       else
+        #puts "False 1"
         return false
       end
     end
+    #puts "false 2"
     return false
   end
 
@@ -296,6 +330,9 @@ puts sd5.prevDate
 puts sd5.nextDate
 
 
+puts "--------- sd6 ---------"
+sd6 = SimpleDate.new(3, 1, 2012)
+#puts sd6.dayOfWeek
 
-sd6 = SimpleDate.new(11, 19, 2014)
-puts sd6.dayOfWeek
+puts sd6.daysAgo(30)
+#puts sd6.leapYear?
